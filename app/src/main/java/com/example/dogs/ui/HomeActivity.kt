@@ -7,17 +7,14 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
+import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.example.dogs.R
 import com.example.dogs.adapters.DogResultAdapter
 import com.example.dogs.extensions.hideKeyboard
-import com.example.dogs.extensions.setDefaultSchedulers
 import com.example.dogs.models.Breeds
 import com.example.dogs.network.Network
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.Disposable
-import io.reactivex.rxjava3.schedulers.Schedulers
-
+import com.example.dogs.viewmodels.DogSearchViewModel
 
 class HomeActivity : AppCompatActivity() {
 
@@ -33,13 +30,19 @@ class HomeActivity : AppCompatActivity() {
         findViewById<ViewPager2>(R.id.dog_view_page)
     }
 
-    private var disposable: Disposable? = null
+    private val dogSearchViewModel: DogSearchViewModel = DogSearchViewModel(Network.dogService)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         supportActionBar?.setHomeButtonEnabled(true)
+
+        dogSearchViewModel.dogSearchResult.observe(this, Observer {
+            if (it != null) {
+                dogPager.adapter = DogResultAdapter(it)
+            }
+        })
 
         searchBtn.setOnClickListener {
 
@@ -51,13 +54,7 @@ class HomeActivity : AppCompatActivity() {
                 Log.i("Test", "Empty search")
             } else {
                 if (Breeds.listOfBreeds.contains(searchText)) {
-                    disposable =
-                        Network.dogService.fetchBreed(searchText).setDefaultSchedulers().subscribe({
-                                Log.i("Test", it.message.toString())
-                            dogPager.adapter = DogResultAdapter(it.message)
-                            }, {
-                                Log.i("Test", it.localizedMessage)
-                            })
+                    dogSearchViewModel.fetchDogByBreed(searchText)
                 } else {
                     Log.i("Test", "Sorry the search for dog can not be found")
                 }

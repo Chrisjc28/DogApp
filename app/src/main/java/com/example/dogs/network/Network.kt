@@ -23,5 +23,5 @@ object Network {
         .client(client)
         .build()
 
-    var dogService: DogService = retrofit.create<DogService>(DogService::class.java)
+    val dogService: DogService = retrofit.create<DogService>(DogService::class.java)
 }
