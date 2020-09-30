@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Dogs</string>
+    <string name="welcome_to_an_app_all_about_dogs">welcome to an app all about dogs</string>
+    <string name="more_info_teat">This application is just for testing/development purposes and lets uses search through a large list of dogs and get more information around each bread. Hope you enjoy.</string>
+    <string name="welcome_btn_text">Continue</string>
+    <string name="search_for_a_dog">Search for a dog</string>
+    <string name="search">search</string>
+</resources>

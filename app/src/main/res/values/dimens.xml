@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dog_welcome_message_margin_top">16dp</dimen>
+    <dimen name="welcome_bt_margin_bottom">24dp</dimen>
+    <dimen name="welcome_bt_padding">16dp</dimen>
+    <dimen name="welcome_text_padding">16dp</dimen>
+    <dimen name="more_info_text_size">18sp</dimen>
+    <dimen name="welcome_title_text_size">36sp</dimen>
+    <dimen name="dog_search_margin">16dp</dimen>
+</resources>
