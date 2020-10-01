@@ -9,4 +9,5 @@
     <dimen name="dog_search_margin">16dp</dimen>
     <dimen name="error_message_text_size">36sp</dimen>
     <dimen name="error_message_margin">16dp</dimen>
+    <dimen name="dog_card_margin">16dp</dimen>
 </resources>
