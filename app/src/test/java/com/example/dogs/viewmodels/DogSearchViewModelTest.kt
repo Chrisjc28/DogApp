@@ -103,6 +103,32 @@ class DogSearchViewModelTest {
         verify(mockDogBreedObserver).onChanged(listOfBreeds)
     }
 
+    @Test
+    fun givenWeHaveRequestedRandomDogWhenWeCallTheDogServiceToFetchRandomDogInformationThenARandomBreedResponseIsReturned() {
+
+        val testSchedulerProvider = TrampolineSchedulerProviderImpl()
+
+        val mockDogService: DogService = mock()
+        val mockDogBreedObserver: Observer<List<String>> = mock()
+
+        val listOfBreeds = listOf(
+            "pug_image_1",
+            "dane_image_2",
+            "spaniel_image_3"
+        )
+
+        val dogSearchViewModel = DogSearchViewModel(mockDogService, testSchedulerProvider)
+
+        dogSearchViewModel.dogRandomSearchResult.observeForever(mockDogBreedObserver)
+
+        whenever(mockDogService.getRandomDogs()).thenReturn(Single.just(BreedResponse(
+            listOfBreeds, "successful")))
+
+        dogSearchViewModel.fetchRandomDogs()
+
+        verify(mockDogBreedObserver).onChanged(listOfBreeds)
+    }
+
 
 
 }
