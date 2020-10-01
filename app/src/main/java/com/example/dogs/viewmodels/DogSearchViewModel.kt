@@ -1,15 +1,18 @@
 package com.example.dogs.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.dogs.extensions.SchedulerProvider
 import com.example.dogs.extensions.safeDispose
-import com.example.dogs.extensions.setDefaultSchedulers
 import com.example.dogs.services.DogService
 import io.reactivex.rxjava3.disposables.Disposable
+import java.util.concurrent.TimeUnit
 
-class DogSearchViewModel(private val dogService: DogService): ViewModel() {
+class DogSearchViewModel(
+    private val dogService: DogService,
+    private val schedulerProvider: SchedulerProvider
+) : ViewModel() {
 
     private var disposable: Disposable? = null
 
@@ -18,13 +21,21 @@ class DogSearchViewModel(private val dogService: DogService): ViewModel() {
     val dogSearchResult: LiveData<List<String>>
         get() = _dogSearchResult
 
-    fun fetchDogByBreed(breed: String) {
+    private val _error = MutableLiveData<Throwable>()
+
+    val error: LiveData<Throwable>
+        get() = _error
+
+    fun fetchDogByBreed(breed: String?) {
         disposable =
-            dogService.fetchBreed(breed).setDefaultSchedulers().subscribe({ specificBreedResponse ->
-                _dogSearchResult.postValue(specificBreedResponse.message)
-            }, {
-                Log.i("Test", it.localizedMessage)
-            })
+            dogService.fetchBreed(breed)
+                ?.subscribeOn(schedulerProvider.io())
+                ?.observeOn(schedulerProvider.ui())
+                ?.subscribe({ specificBreedResponse ->
+                    _dogSearchResult.postValue(specificBreedResponse.message)
+                }, {
+                    _error.postValue(it)
+                })
     }
 
 

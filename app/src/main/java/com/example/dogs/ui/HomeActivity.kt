@@ -5,21 +5,31 @@ import android.util.Log
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NavUtils
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.viewpager2.widget.ViewPager2
 import com.example.dogs.R
 import com.example.dogs.adapters.DogResultAdapter
+import com.example.dogs.extensions.SchedulerProviderImpl
+import com.example.dogs.extensions.visible
+import com.example.dogs.extensions.gone
 import com.example.dogs.extensions.hideKeyboard
 import com.example.dogs.models.Breeds
 import com.example.dogs.network.Network
 import com.example.dogs.viewmodels.DogSearchViewModel
+import java.util.*
 
 class HomeActivity : AppCompatActivity() {
 
     private val dogSearch: EditText by lazy {
         findViewById<EditText>(R.id.dog_search_edit_text)
+    }
+
+    private val errorMessage: TextView by lazy {
+        findViewById<TextView>(R.id.error_message)
     }
 
     private val searchBtn: Button by lazy {
@@ -30,7 +40,9 @@ class HomeActivity : AppCompatActivity() {
         findViewById<ViewPager2>(R.id.dog_view_page)
     }
 
-    private val dogSearchViewModel: DogSearchViewModel = DogSearchViewModel(Network.dogService)
+    private val schedulerProviderImpl: SchedulerProviderImpl = SchedulerProviderImpl()
+
+    private val dogSearchViewModel: DogSearchViewModel = DogSearchViewModel(Network.dogService, schedulerProviderImpl)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,40 +52,47 @@ class HomeActivity : AppCompatActivity() {
 
         dogSearchViewModel.dogSearchResult.observe(this, Observer {
             if (it != null) {
+                errorMessage.gone()
                 dogPager.adapter = DogResultAdapter(it)
             }
         })
 
+        dogSearchViewModel.error.observe(this, Observer { throwable ->
+            Log.i("Test", throwable.localizedMessage!!)
+        })
+
         searchBtn.setOnClickListener {
-
             hideKeyboard()
-
             val searchText = performBasicValidationEditText(dogSearch)
 
-            if (searchText.isEmpty()) {
-                Log.i("Test", "Empty search")
+            if (searchText == null) {
+                handleErrorState("Please enter a dog breed for us to search for")
             } else {
                 if (Breeds.listOfBreeds.contains(searchText)) {
                     dogSearchViewModel.fetchDogByBreed(searchText)
                 } else {
-                    Log.i("Test", "Sorry the search for dog can not be found")
+                    handleErrorState("Sorry the search for dog can not be found")
                 }
             }
-
-            //TODO: handle if not text have been entered into the search box but the user clicks search
-            //TODO: Perform api call to check if search for dog is in the the list of dogs in the api
-            //TODO: If the dog is in the list load up the dogs information on the screen in some UI
-            //TODO: if the dog searched for is not in the list show an error
-            //TODO: create basic sealed class to represent an success state and error state
         }
-
     }
 
-    private fun performBasicValidationEditText(dogSearch: EditText): String {
+    private fun disableSearchButton() {
+        searchBtn.setOnClickListener(null)
+        searchBtn.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray))
+    }
+
+    private fun handleErrorState(errorMessageValue: String) {
+        errorMessage.text = errorMessageValue
+        errorMessage.visible()
+        dogPager.gone()
+    }
+
+    private fun performBasicValidationEditText(dogSearch: EditText): String? {
         return if (dogSearch.text.isNotEmpty()) {
-            dogSearch.text.toString().toLowerCase().trim()
+            dogSearch.text.toString().toLowerCase(Locale.getDefault()).trim()
         } else {
-            ""
+            null
         }
     }
 

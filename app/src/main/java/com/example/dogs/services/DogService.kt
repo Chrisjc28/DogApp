@@ -9,6 +9,6 @@ import retrofit2.http.Path
 interface DogService {
 
     @GET("breed/{breed}/images/")
-    fun fetchBreed(@Path("breed") breed: String): Single<SpecificBreedResponse>
+    fun fetchBreed(@Path("breed") breed: String?): Single<SpecificBreedResponse>?
 
 }
