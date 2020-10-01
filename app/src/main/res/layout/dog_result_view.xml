@@ -17,6 +17,7 @@
         <ImageView
             android:id="@+id/dog_image_view"
             android:layout_width="match_parent"
+            android:scaleType="fitCenter"
             android:layout_height="match_parent"/>
 
     </androidx.cardview.widget.CardView>
