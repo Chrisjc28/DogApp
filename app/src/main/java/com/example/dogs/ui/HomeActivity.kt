@@ -24,6 +24,8 @@ import java.util.*
 
 class HomeActivity : AppCompatActivity() {
 
+    private val LOG_TAG = HomeActivity::class.java.simpleName
+
     private val dogSearch: EditText by lazy {
         findViewById<EditText>(R.id.dog_search_edit_text)
     }
@@ -53,12 +55,13 @@ class HomeActivity : AppCompatActivity() {
         dogSearchViewModel.dogSearchResult.observe(this, Observer {
             if (it != null) {
                 errorMessage.gone()
+                dogPager.visible()
                 dogPager.adapter = DogResultAdapter(it)
             }
         })
 
         dogSearchViewModel.error.observe(this, Observer { throwable ->
-            Log.i("Test", throwable.localizedMessage!!)
+            Log.i(LOG_TAG, throwable.localizedMessage!!)
         })
 
         searchBtn.setOnClickListener {
@@ -66,20 +69,15 @@ class HomeActivity : AppCompatActivity() {
             val searchText = performBasicValidationEditText(dogSearch)
 
             if (searchText == null) {
-                handleErrorState("Please enter a dog breed for us to search for")
+                handleErrorState(getString(R.string.blank_input_error_message))
             } else {
                 if (Breeds.listOfBreeds.contains(searchText)) {
                     dogSearchViewModel.fetchDogByBreed(searchText)
                 } else {
-                    handleErrorState("Sorry the search for dog can not be found")
+                    handleErrorState(getString(R.string.no_dog_found_error))
                 }
             }
         }
-    }
-
-    private fun disableSearchButton() {
-        searchBtn.setOnClickListener(null)
-        searchBtn.setBackgroundColor(ContextCompat.getColor(this, android.R.color.darker_gray))
     }
 
     private fun handleErrorState(errorMessageValue: String) {

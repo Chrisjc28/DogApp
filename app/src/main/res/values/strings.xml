@@ -5,4 +5,6 @@
     <string name="welcome_btn_text">Continue</string>
     <string name="search_for_a_dog">Search for a dog</string>
     <string name="search">search</string>
+    <string name="blank_input_error_message">Please enter a dog breed for us to search for</string>
+    <string name="no_dog_found_error">Sorry that doesn\'t seem to be in our current list of breeds</string>
 </resources>

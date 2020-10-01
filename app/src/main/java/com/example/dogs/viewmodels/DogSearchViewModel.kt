@@ -7,7 +7,6 @@ import com.example.dogs.extensions.SchedulerProvider
 import com.example.dogs.extensions.safeDispose
 import com.example.dogs.services.DogService
 import io.reactivex.rxjava3.disposables.Disposable
-import java.util.concurrent.TimeUnit
 
 class DogSearchViewModel(
     private val dogService: DogService,

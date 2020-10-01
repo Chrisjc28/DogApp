@@ -7,4 +7,6 @@
     <dimen name="more_info_text_size">18sp</dimen>
     <dimen name="welcome_title_text_size">36sp</dimen>
     <dimen name="dog_search_margin">16dp</dimen>
+    <dimen name="error_message_text_size">36sp</dimen>
+    <dimen name="error_message_margin">16dp</dimen>
 </resources>
