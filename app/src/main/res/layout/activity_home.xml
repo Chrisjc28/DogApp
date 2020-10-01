@@ -35,6 +35,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="@+id/dog_search_edit_text"/>
 
+    <Button
+        android:id="@+id/dog_random_search_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dog_search_margin"
+        android:layout_marginLeft="@dimen/dog_search_margin"
+        android:layout_marginRight="@dimen/dog_search_margin"
+        android:text="@string/random_search"
+        android:background="@android:color/holo_blue_light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dog_search_button"
+        />
+
     <TextView
         android:id="@+id/error_message"
         android:layout_width="0dp"
@@ -51,11 +65,13 @@
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/dog_view_page"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/dog_search_edit_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
 

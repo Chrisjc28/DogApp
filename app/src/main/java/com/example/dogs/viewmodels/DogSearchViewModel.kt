@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.example.dogs.extensions.SchedulerProvider
 import com.example.dogs.extensions.safeDispose
 import com.example.dogs.services.DogService
+import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.disposables.Disposable
 
 class DogSearchViewModel(
@@ -13,12 +14,18 @@ class DogSearchViewModel(
     private val schedulerProvider: SchedulerProvider
 ) : ViewModel() {
 
-    private var disposable: Disposable? = null
+    private var disposableSearch: Disposable? = null
+    private var disposableRandom: Disposable? = null
 
     private val _dogSearchResult = MutableLiveData<List<String>>()
 
     val dogSearchResult: LiveData<List<String>>
         get() = _dogSearchResult
+
+    private val _dogRandomSearchResult = MutableLiveData<List<String>>()
+
+    val dogRandomSearchResult: LiveData<List<String>>
+        get() = _dogRandomSearchResult
 
     private val _error = MutableLiveData<Throwable>()
 
@@ -26,7 +33,7 @@ class DogSearchViewModel(
         get() = _error
 
     fun fetchDogByBreed(breed: String?) {
-        disposable =
+        disposableSearch =
             dogService.fetchBreed(breed)
                 ?.subscribeOn(schedulerProvider.io())
                 ?.observeOn(schedulerProvider.ui())
@@ -37,10 +44,23 @@ class DogSearchViewModel(
                 })
     }
 
+    fun fetchRandomDogs() {
+        disposableRandom =
+            dogService.getRandomDogs()
+                ?.subscribeOn(schedulerProvider.io())
+                ?.observeOn(schedulerProvider.ui())
+                ?.subscribe({ specificBreedResponse ->
+                    _dogRandomSearchResult.postValue(specificBreedResponse.message)
+                }, {
+                    _error.postValue(it)
+                })
+    }
+
 
     override fun onCleared() {
         super.onCleared()
         _dogSearchResult.value = null
-        disposable?.safeDispose()
+        disposableRandom.safeDispose()
+        disposableSearch.safeDispose()
     }
 }

@@ -3,7 +3,7 @@ package com.example.dogs.viewmodels
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.dogs.extensions.TrampolineSchedulerProviderImpl
-import com.example.dogs.models.SpecificBreedResponse
+import com.example.dogs.models.BreedResponse
 import com.example.dogs.services.DogService
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -95,7 +95,7 @@ class DogSearchViewModelTest {
 
         dogSearchViewModel.dogSearchResult.observeForever(mockDogBreedObserver)
 
-        whenever(mockDogService.fetchBreed(breed)).thenReturn(Single.just(SpecificBreedResponse(
+        whenever(mockDogService.fetchBreed(breed)).thenReturn(Single.just(BreedResponse(
             listOfBreeds, "successful")))
 
         dogSearchViewModel.fetchDogByBreed(breed)

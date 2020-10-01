@@ -38,6 +38,10 @@ class HomeActivity : AppCompatActivity() {
         findViewById<Button>(R.id.dog_search_button)
     }
 
+    private val randomSearchBtn: Button by lazy {
+        findViewById<Button>(R.id.dog_random_search_button)
+    }
+
     private val dogPager: ViewPager2 by lazy {
         findViewById<ViewPager2>(R.id.dog_view_page)
     }
@@ -60,10 +64,32 @@ class HomeActivity : AppCompatActivity() {
             }
         })
 
+        dogSearchViewModel.dogRandomSearchResult.observe(this, Observer {
+            if (it != null) {
+                errorMessage.gone()
+                dogPager.visible()
+                dogPager.adapter = DogResultAdapter(it)
+            }
+        })
+
         dogSearchViewModel.error.observe(this, Observer { throwable ->
             Log.i(LOG_TAG, throwable.localizedMessage!!)
         })
 
+
+        setUpSearchButton()
+        setUpRandomButton()
+
+    }
+
+
+    private fun setUpRandomButton() {
+        randomSearchBtn.setOnClickListener {
+            dogSearchViewModel.fetchRandomDogs()
+        }
+    }
+
+    private fun setUpSearchButton() {
         searchBtn.setOnClickListener {
             hideKeyboard()
             val searchText = performBasicValidationEditText(dogSearch)
